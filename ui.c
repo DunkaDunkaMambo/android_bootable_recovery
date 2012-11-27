@@ -292,11 +292,11 @@ static void draw_screen_locked(void)
             gr_color(MENU_TEXT_COLOR);
             int batt_level = 0;
             batt_level = get_batt_stats();
-            if (batt_level < 51) {
-                gr_color(255, 255, 0, 255);
-            }
-            else if (batt_level < 21) {
+            if (batt_level < 21) {
                 gr_color(255, 0, 0, 255);
+            }
+            else if (batt_level < 51) {
+                gr_color(255, 255, 0, 255);
             }
             else {
                 gr_color(0, 255, 0, 255);
