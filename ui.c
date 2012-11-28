@@ -724,8 +724,9 @@ void ui_init(void)
         char key_list[PROPERTY_VALUE_MAX];
         property_get("ro.cwm.repeatable_keys", key_list, "");
         if (strlen(key_list) == 0) {
-            boardRepeatableKeys[boardNumRepeatableKeys++] = KEY_UP;
-            boardRepeatableKeys[boardNumRepeatableKeys++] = KEY_DOWN;
+// Disable key repeat on these keys else scrolling gestures will enter a loop frenzy
+//            boardRepeatableKeys[boardNumRepeatableKeys++] = KEY_UP;
+//            boardRepeatableKeys[boardNumRepeatableKeys++] = KEY_DOWN;
             boardRepeatableKeys[boardNumRepeatableKeys++] = KEY_VOLUMEUP;
             boardRepeatableKeys[boardNumRepeatableKeys++] = KEY_VOLUMEDOWN;
         } else {
