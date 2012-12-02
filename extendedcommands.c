@@ -116,7 +116,7 @@ int install_zip(const char* packagefilepath)
 
 void show_install_update_menu()
 {
-    static char* headers[] = {  "Apply update from .zip file on SD card",
+    static char* headers[] = {  "Apply update from .zip file",
                                 "",
                                 NULL
     };
@@ -972,7 +972,7 @@ void show_nandroid_advanced_restore_menu(const char* path)
                                 "",
                                 "Choose an image to restore",
                                 "first. The next menu will",
-                                "you more options.",
+                                "provide you more options.",
                                 "",
                                 NULL
     };
