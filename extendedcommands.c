@@ -110,9 +110,9 @@ int install_zip(const char* packagefilepath)
 }
 
 #define ITEM_CHOOSE_ZIP       0
-#define ITEM_APPLY_SDCARD     1
-#define ITEM_SIG_CHECK        2
-#define ITEM_CHOOSE_ZIP_INT   3
+#define ITEM_CHOOSE_ZIP_INT   1
+#define ITEM_APPLY_SDCARD     2
+#define ITEM_SIG_CHECK        3
 
 void show_install_update_menu()
 {
@@ -122,19 +122,19 @@ void show_install_update_menu()
     };
     
     char* install_menu_items[] = {  "Choose zip from external sdcard",
+                                    NULL,
                                     "Apply /sdcard/update.zip",
                                     "Toggle signature verification",
-                                    NULL,
                                     NULL };
 
     char *other_sd = NULL;
     if (volume_for_path("/emmc") != NULL) {
         other_sd = "/emmc/";
-        install_menu_items[3] = "Choose zip from internal sdcard";
+        install_menu_items[1] = "choose zip from internal sdcard";
     }
     else if (volume_for_path("/external_sd") != NULL) {
         other_sd = "/external_sd/";
-        install_menu_items[3] = "Choose zip from external sdcard";
+        install_menu_items[1] = "choose zip from external sdcard";
     }
     
     for (;;)
