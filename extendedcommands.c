@@ -1076,16 +1076,16 @@ void show_nandroid_menu()
                                 NULL
     };
 
-    char* list[] = { "Backup",
-                            "Restore",
-                            "Delete",
-                            "Advanced restore",
+    char* list[] = { "Backup to external sdcard",
+                            NULL,
+                            "Restore from external sdcard",
+                            NULL,
+                            "Delete from external sdcard",
+                            NULL,
+                            "Advanced restore from external sdcard",
+                            NULL,
                             "Free unused backup data",
                             "Choose backup format",
-                            NULL,
-                            NULL,
-                            NULL,
-                            NULL,
                             NULL,
                             NULL,
                             NULL
@@ -1094,17 +1094,17 @@ void show_nandroid_menu()
     char *other_sd = NULL;
     if (volume_for_path("/emmc") != NULL) {
         other_sd = "/emmc";
-        list[6] = "Backup to internal sdcard";
-        list[7] = "Restore from internal sdcard";
-        list[8] = "Advanced restore from internal sdcard";
-        list[9] = "Delete from internal sdcard";
+        list[1] = "Backup to internal sdcard";
+        list[3] = "Restore from internal sdcard";
+        list[7] = "Advanced restore from internal sdcard";
+        list[5] = "Delete from internal sdcard";
     }
     else if (volume_for_path("/external_sd") != NULL) {
         other_sd = "/external_sd";
-        list[6] = "Backup to external sdcard";
-        list[7] = "Restore from external sdcard";
-        list[8] = "Advanced restore from external sdcard";
-        list[9] = "Delete from external sdcard";
+        list[1] = "Backup to external sdcard";
+        list[3] = "Restore from external sdcard";
+        list[7] = "Advanced restore from external sdcard";
+        list[5] = "Delete from external sdcard";
     }
 #ifdef RECOVERY_EXTEND_NANDROID_MENU
     extend_nandroid_menu(list, 10, sizeof(list) / sizeof(char*));
@@ -1135,21 +1135,6 @@ void show_nandroid_menu()
                 }
                 break;
             case 1:
-                show_nandroid_restore_menu("/sdcard");
-                break;
-            case 2:
-                show_nandroid_delete_menu("/sdcard");
-                break;
-            case 3:
-                show_nandroid_advanced_restore_menu("/sdcard");
-                break;
-            case 4:
-                run_dedupe_gc(other_sd);
-                break;
-            case 5:
-                choose_backup_format();
-                break;
-            case 6:
                 {
                     char backup_path[PATH_MAX];
                     time_t t = time(NULL);
@@ -1181,20 +1166,35 @@ void show_nandroid_menu()
                     nandroid_backup(backup_path);
                 }
                 break;
-            case 7:
+            case 2:
+                show_nandroid_restore_menu("/sdcard");
+                break;
+            case 3:
                 if (other_sd != NULL) {
                     show_nandroid_restore_menu(other_sd);
                 }
                 break;
-            case 8:
+            case 4:
+                show_nandroid_delete_menu("/sdcard");
+                break;
+            case 5:
+                if (other_sd != NULL) {
+                    show_nandroid_delete_menu(other_sd);
+                }
+                break;
+            case 6:
+                show_nandroid_advanced_restore_menu("/sdcard");
+                break;
+            case 7:
                 if (other_sd != NULL) {
                     show_nandroid_advanced_restore_menu(other_sd);
                 }
                 break;
+            case 8:
+                run_dedupe_gc(other_sd);
+                break;
             case 9:
-                if (other_sd != NULL) {
-                    show_nandroid_delete_menu(other_sd);
-                }
+                choose_backup_format();
                 break;
             default:
 #ifdef RECOVERY_EXTEND_NANDROID_MENU
