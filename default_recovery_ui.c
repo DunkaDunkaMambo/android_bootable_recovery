@@ -20,7 +20,11 @@
 #include "common.h"
 #include "extendedcommands.h"
 
-char* MENU_HEADERS[] = { NULL };
+char* MENU_HEADERS[] = { "Swipe the screen up and down to scroll",
+                         "Swipe left to go back, right to select",
+                         "HOME key to select, BACK key to go back",
+                         "",
+                       NULL };
 
 char* MENU_ITEMS[] = { "Reboot system now",
                        "Install zip",
