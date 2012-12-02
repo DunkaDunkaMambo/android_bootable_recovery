@@ -522,13 +522,14 @@ static int input_callback(int fd, short revents, void *data)
                 } else if (touch_x < ((keywidth * 2) + keyoffset)) {
                     //home button
                     ev.code = KEY_HOME;
+                    vibrate(VIBRATOR_TIME_MS);
                     reset_gestures();
                 } else  {
                     //back button
                     ev.code = KEY_BACK;
+                    vibrate(VIBRATOR_TIME_MS);
                     reset_gestures();
                 }
-                vibrate(VIBRATOR_TIME_MS);
             }
             if (slide_right == 1) {
                 ev.code = KEY_HOME;
@@ -573,12 +574,12 @@ static int input_callback(int fd, short revents, void *data)
             diff_y += touch_y - old_y;
 
     if (touch_y < gr_fb_height()) {
-            if (diff_y > 25) {
+            if (diff_y > 40) {
                 printf("Gesture Down generated\n");
                 ev.code = KEY_DOWN;
                 ev.type = EV_KEY;
                 reset_gestures();
-	} else if (diff_y < -25) {
+	} else if (diff_y < -40) {
                 printf("Gesture Up generated\n");
                 ev.code = KEY_UP;
                 ev.type = EV_KEY;
