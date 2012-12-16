@@ -726,7 +726,8 @@ prompt_and_wait() {
                 break;
 
             case ITEM_APPLY_SIDELOAD:
-                apply_from_adb();
+                if (confirm_selection("Confirm install?", "Yes - Install zip from sideload"))
+                    apply_from_adb();
                 break;
 
             case ITEM_NANDROID:
