@@ -551,13 +551,13 @@ static int input_callback(int fd, short revents, void *data)
 
 	if (touch_y < gr_fb_height()) {
             if (diff_x > (gr_fb_width() / 4)) {
-		printf("Gesture forward generated\n");
+		//printf("Gesture forward generated\n");
                 slide_right = 1;
                 //ev.code = KEY_ENTER;
                 //ev.type = EV_KEY;
                 reset_gestures();
     } else if(diff_x < ((gr_fb_width() / 4) * -1)) {
-		printf("Gesture back generated\n");
+		//printf("Gesture back generated\n");
                 slide_left = 1;
                 //ev.code = KEY_BACK;
                 //ev.type = EV_KEY;
@@ -575,12 +575,12 @@ static int input_callback(int fd, short revents, void *data)
 
     if (touch_y < gr_fb_height()) {
             if (diff_y > 40) {
-                printf("Gesture Down generated\n");
+                //printf("Gesture Down generated\n");
                 ev.code = KEY_DOWN;
                 ev.type = EV_KEY;
                 reset_gestures();
 	} else if (diff_y < -40) {
-                printf("Gesture Up generated\n");
+                //printf("Gesture Up generated\n");
                 ev.code = KEY_UP;
                 ev.type = EV_KEY;
                 reset_gestures();
