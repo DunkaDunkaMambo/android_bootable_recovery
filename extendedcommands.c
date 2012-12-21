@@ -989,6 +989,7 @@ void show_nandroid_advanced_restore_menu(const char* path)
     };
 
     static char* list[] = { "Restore boot",
+                            "Restore cust",
                             "Restore system",
                             "Restore data",
                             "Restore cache",
@@ -1009,27 +1010,31 @@ void show_nandroid_advanced_restore_menu(const char* path)
     {
         case 0:
             if (confirm_selection(confirm_restore, "Yes - Restore boot"))
-                nandroid_restore(file, 1, 0, 0, 0, 0, 0);
+                nandroid_restore(file, 1, 0, 0, 0, 0, 0, 0);
             break;
         case 1:
-            if (confirm_selection(confirm_restore, "Yes - Restore system"))
-                nandroid_restore(file, 0, 1, 0, 0, 0, 0);
+            if (confirm_selection(confirm_restore, "Yes - Restore coot"))
+                nandroid_restore(file, 0, 1, 0, 0, 0, 0, 0);
             break;
         case 2:
-            if (confirm_selection(confirm_restore, "Yes - Restore data"))
-                nandroid_restore(file, 0, 0, 1, 0, 0, 0);
+            if (confirm_selection(confirm_restore, "Yes - Restore system"))
+                nandroid_restore(file, 0, 0, 1, 0, 0, 0, 0);
             break;
         case 3:
-            if (confirm_selection(confirm_restore, "Yes - Restore cache"))
-                nandroid_restore(file, 0, 0, 0, 1, 0, 0);
+            if (confirm_selection(confirm_restore, "Yes - Restore data"))
+                nandroid_restore(file, 0, 0, 0, 1, 0, 0, 0);
             break;
         case 4:
-            if (confirm_selection(confirm_restore, "Yes - Restore sd-ext"))
-                nandroid_restore(file, 0, 0, 0, 0, 1, 0);
+            if (confirm_selection(confirm_restore, "Yes - Restore cache"))
+                nandroid_restore(file, 0, 0, 0, 0, 1, 0, 0);
             break;
         case 5:
+            if (confirm_selection(confirm_restore, "Yes - Restore sd-ext"))
+                nandroid_restore(file, 0, 0, 0, 0, 0, 1, 0);
+            break;
+        case 6:
             if (confirm_selection(confirm_restore, "Yes - Restore wimax"))
-                nandroid_restore(file, 0, 0, 0, 0, 0, 1);
+                nandroid_restore(file, 0, 0, 0, 0, 0, 0, 1);
             break;
     }
 }
