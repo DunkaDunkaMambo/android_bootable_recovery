@@ -1013,7 +1013,7 @@ void show_nandroid_advanced_restore_menu(const char* path)
                 nandroid_restore(file, 1, 0, 0, 0, 0, 0, 0);
             break;
         case 1:
-            if (confirm_selection(confirm_restore, "Yes - Restore coot"))
+            if (confirm_selection(confirm_restore, "Yes - Restore cust"))
                 nandroid_restore(file, 0, 1, 0, 0, 0, 0, 0);
             break;
         case 2:
