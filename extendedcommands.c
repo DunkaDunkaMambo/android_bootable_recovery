@@ -402,7 +402,7 @@ void show_nandroid_restore_menu(const char* path)
         return;
 
     if (confirm_selection("Confirm restore?", "Yes - Restore"))
-        nandroid_restore(file, 1, 1, 1, 1, 1, 0);
+        nandroid_restore(file, 1, 1, 1, 1, 1, 1, 0);
 }
 
 void show_nandroid_delete_menu(const char* path)
@@ -1490,7 +1490,7 @@ void process_volumes() {
     ui_print("in case of error.\n");
 
     nandroid_backup(backup_path);
-    nandroid_restore(backup_path, 1, 1, 1, 1, 1, 0);
+    nandroid_restore(backup_path, 1, 1, 1, 1, 1, 1, 0);
     ui_set_show_text(0);
 }
 
