@@ -130,11 +130,11 @@ void show_install_update_menu()
     char *other_sd = NULL;
     if (volume_for_path("/emmc") != NULL) {
         other_sd = "/emmc/";
-        install_menu_items[1] = "choose zip from internal sdcard";
+        install_menu_items[1] = "Choose zip from internal sdcard";
     }
     else if (volume_for_path("/external_sd") != NULL) {
         other_sd = "/external_sd/";
-        install_menu_items[1] = "choose zip from external sdcard";
+        install_menu_items[1] = "Choose zip from external sdcard";
     }
     
     for (;;)
@@ -595,7 +595,7 @@ int confirm_selection(const char* title, const char* confirm)
 
     char* confirm_headers[]  = {  title, "  THIS CAN NOT BE UNDONE.", "", NULL };
     int one_confirm = 0 == stat("/sdcard/clockworkmod/.one_confirm", &info);
-#ifdef BOARD_TOUCH_RECOVERY
+#if 1
     one_confirm = 1;
 #endif 
     if (one_confirm) {
@@ -1305,7 +1305,7 @@ void show_advanced_menu()
                             "Fix permissions",
                             "Partition sdcard",
                             "Partition external sdcard",
-                            "Partition internal sdcard",
+                            NULL,
                             NULL
     };
 
