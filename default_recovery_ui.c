@@ -34,6 +34,7 @@ char* MENU_ITEMS[] = { "Reboot system now",
                        "Backup and restore",
                        "Mounts and storage",
                        "Advanced",
+                       "Extras",
                        "Power off",
                        NULL };
 

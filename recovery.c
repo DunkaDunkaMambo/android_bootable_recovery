@@ -47,6 +47,8 @@
 #include "extendedcommands.h"
 #include "flashutils/flashutils.h"
 #include "dedupe/dedupe.h"
+#include "extras.h"
+
 
 struct selabel_handle *sehandle = NULL;
 
@@ -737,6 +739,10 @@ prompt_and_wait() {
 
             case ITEM_ADVANCED:
                 show_advanced_menu();
+                break;
+
+            case ITEM_EXTRAS:
+                show_extras_menu();
                 break;
 
             case ITEM_POWEROFF:

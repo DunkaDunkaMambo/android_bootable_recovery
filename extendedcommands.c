@@ -40,7 +40,7 @@
 #include "mtdutils/mtdutils.h"
 #include "bmlutils/bmlutils.h"
 #include "cutils/android_reboot.h"
-
+#include "extras.h"
 
 int signature_check_enabled = 1;
 int script_assert_enabled = 1;
@@ -595,7 +595,7 @@ int confirm_selection(const char* title, const char* confirm)
 
     char* confirm_headers[]  = {  title, "  THIS CAN NOT BE UNDONE.", "", NULL };
     int one_confirm = 0 == stat("/sdcard/clockworkmod/.one_confirm", &info);
-#if 1
+#ifdef BOARD_TOUCH_RECOVERY
     one_confirm = 1;
 #endif 
     if (one_confirm) {
