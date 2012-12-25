@@ -589,10 +589,12 @@ void show_mount_usb_storage_menu()
 
 int confirm_selection(const char* title, const char* confirm)
 {
+    ensure_path_mounted("/sdcard");
     struct stat info;
     if (0 == stat("/sdcard/clockworkmod/.no_confirm", &info))
         return 1;
 
+    ensure_path_mounted("/sdcard");
     char* confirm_headers[]  = {  title, "  THIS CAN NOT BE UNDONE.", "", NULL };
     int one_confirm = 0 == stat("/sdcard/clockworkmod/.one_confirm", &info);
 #ifdef BOARD_TOUCH_RECOVERY
@@ -725,7 +727,7 @@ int format_unknown_device(const char *device, const char* path, const char *fs_t
         Volume *vol = volume_for_path("/sd-ext");
         if (vol == NULL || 0 != stat(vol->device, &st))
         {
-            ui_print("No app2sd partition found. Skipping format of /sd-ext.\n");
+//            ui_print("No app2sd partition found. Skipping format of /sd-ext.\n");
             return 0;
         }
     }

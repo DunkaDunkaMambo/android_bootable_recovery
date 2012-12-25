@@ -260,6 +260,7 @@ int nandroid_backup_partition_extended(const char* backup_path, const char* moun
     char name[PATH_MAX];
     strcpy(name, basename(mount_point));
 
+    ensure_path_mounted("/sdcard");
     struct stat file_info;
     int callback = stat("/sdcard/clockworkmod/.hidenandroidprogress", &file_info) != 0;
 
@@ -386,6 +387,7 @@ int nandroid_backup(const char* backup_path)
             return ret;
     }
 
+    ensure_path_mounted("/sdcard");
     if (0 != stat("/sdcard/.android_secure", &s))
     {
         ui_print("No /sdcard/.android_secure found. Skipping backup of applications on external storage.\n");
@@ -396,13 +398,27 @@ int nandroid_backup(const char* backup_path)
             return ret;
     }
 
+    ensure_path_mounted("/sdcard");
+    if (0 != stat("/sdcard/clockworkmod/.backup_internal", &s))
+    {
+        ui_print("Backup of internal storage disabled. Skipping...\n");
+    }
+    else
+    {
+        if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/emmc", 0)))
+            return ret;
+    }
+
+
+
+
     if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/cache", 0)))
         return ret;
 
     vol = volume_for_path("/sd-ext");
     if (vol == NULL || 0 != stat(vol->device, &s))
     {
-        ui_print("No sd-ext found. Skipping backup of sd-ext.\n");
+//        ui_print("No sd-ext found. Skipping backup of sd-ext.\n");
     }
     else
     {
@@ -568,7 +584,7 @@ int nandroid_restore_partition_extended(const char* backup_path, const char* mou
         }
 
         if (backup_filesystem == NULL || restore_handler == NULL) {
-            ui_print("%s.img not found. Skipping restore of %s.\n", name, mount_point);
+            ui_print("%s.img not found on this backup. Skipping restore of %s.\n", name, mount_point);
             return 0;
         }
         else {
@@ -593,6 +609,7 @@ int nandroid_restore_partition_extended(const char* backup_path, const char* mou
 
     ensure_directory(mount_point);
 
+    ensure_path_mounted("/sdcard");
     int callback = stat("/sdcard/clockworkmod/.hidenandroidprogress", &file_info) != 0;
 
     ui_print("Restoring %s...\n", name);
@@ -724,6 +741,9 @@ int nandroid_restore(const char* backup_path, int restore_boot, int restore_cust
     }
 
     if (restore_data && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/sdcard/.android_secure", 0)))
+        return ret;
+
+    if (restore_data && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/emmc", 0)))
         return ret;
 
     if (restore_cache && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/cache", 0)))

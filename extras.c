@@ -51,8 +51,6 @@ int create_customzip(const char* custompath)
     return 0;
 }
 
-#define SCRIPT_COMMAND_SIZE 512
-
 void choose_bootanimation_menu(const char *ba_path)
 {
     if (ensure_path_mounted(ba_path) != 0) {
@@ -60,7 +58,7 @@ void choose_bootanimation_menu(const char *ba_path)
         return;
     }
 
-    static char* headers[] = {  "Choose a Boot Animation",
+    static char* headers[] = {  "Choose a boot animation",
                                 "",
                                 NULL
     };
@@ -69,7 +67,7 @@ void choose_bootanimation_menu(const char *ba_path)
     if (ba_file == NULL)
         return;
 
-    if (confirm_selection("Confirm change Boot Animation?", "Yes - Change")) {
+    if (confirm_selection("Confirm change boot animation?", "Yes - Change")) {
         char tmp[PATH_MAX];
 	sprintf(tmp, "change_ba.sh %s", ba_file);
 	ensure_path_mounted("/system");
@@ -85,7 +83,7 @@ void show_bootanimation_menu() {
                                 NULL
     };
 
-    char* list[] = { "Choose Boot Bnimation from internal sdcard",
+    char* list[] = { "Choose boot animation from internal sdcard",
         "Choose Boot Animation from external sdcard",
         NULL
     };
@@ -108,11 +106,11 @@ void show_extras_menu()
                                 NULL
     };
 
-    static char* list[] = { "Change Boot Animation",
+    static char* list[] = { "Change boot animation",
                             "Toggle smaller confirmation sub-menus",
                             "Toggle backup & restore progress",
-                            "Toggle backup of android_secure internal or external",
-                            "Create custom backup zip",
+                            "Toggle backup of internal storage",
+                            "Create zip file with the current ROM",
                             NULL
     };
 
@@ -127,40 +125,40 @@ void show_extras_menu()
 		show_bootanimation_menu();
 		break;
 	    case 1:
-		ensure_path_mounted("/emmc");
-                if( access("/emmc/clockworkmod/.one_confirm", F_OK ) != -1 ) {
-                   __system("rm -rf /emmc/clockworkmod/.one_confirm");
-                   ui_print("one confirm disabled\n");
+		ensure_path_mounted("/sdcard");
+                if( access("/sdcard/clockworkmod/.one_confirm", F_OK ) != -1 ) {
+                   __system("rm -rf /sdcard/clockworkmod/.one_confirm");
+                   ui_print("Smaller confirmation sub-menus disabled\n");
                 } else {
-                   __system("touch /emmc/clockworkmod/.one_confirm");
-                   ui_print("one confirm enabled\n");
+                   __system("touch /sdcard/clockworkmod/.one_confirm");
+                   ui_print("Smaller confirmation sub-menus enabled\n");
                 }
 		break;
 	    case 2:
-                ensure_path_mounted("/emmc");
-                if( access("/emmc/clockworkmod/.hidenandroidprogress", F_OK ) != -1 ) {
-                   __system("rm -rf /emmc/clockworkmod/.hidenandroidprogress");
-                   ui_print("nandroid progress will be shown\n");
+                ensure_path_mounted("/sdcard");
+                if( access("/sdcard/clockworkmod/.hidenandroidprogress", F_OK ) != -1 ) {
+                   __system("rm -rf /sdcard/clockworkmod/.hidenandroidprogress");
+                   ui_print("Nandroid progress will be shown\n");
                 } else {
-                   __system("touch /emmc/clockworkmod/.hidenandroidprogress");
-                   ui_print("nandroid progress will be hidden\n");
+                   __system("touch /sdcard/clockworkmod/.hidenandroidprogress");
+                   ui_print("Nandroid progress will be hidden\n");
                 }
                 break;
 	    case 3:
-                ensure_path_mounted("/emmc");
-                if( access("/emmc/clockworkmod/.is_as_external", F_OK ) != -1 ) {
-                   __system("rm -rf /emmc/clockworkmod/.is_as_external");
-                   ui_print("android_secure will be set to internal\n");
+                ensure_path_mounted("/sdcard");
+                if( access("/sdcard/clockworkmod/.backup_internal", F_OK ) != -1 ) {
+                   __system("rm -rf /sdcard/clockworkmod/.backup_internal");
+                   ui_print("Backup of internal storage disabled\n");
                 } else {
-                   __system("touch /emmc/clockworkmod/.is_as_external");
-                   ui_print("android_secure will be set to external\n");
+                   __system("touch /sdcard/clockworkmod/.backup_internal");
+                   ui_print("Backup of internal storage enabled\n");
                 }
                 break;
 	    case 4:
 		ensure_path_mounted("/system");
-		ensure_path_mounted("/emmc");
-                if (confirm_selection("Create a zip from system and boot?", "Yes - Create custom zip")) {
-		ui_print("Creating custom zip...\n");
+		ensure_path_mounted("/sdcard");
+                if (confirm_selection("Create a zip from system and boot?", "Yes - Create zip file")) {
+		ui_print("Dumping current rom to a zip file...\n");
 		ui_print("This may take a while. Be Patient.\n");
                     char custom_path[PATH_MAX];
                     time_t t = time(NULL);
@@ -169,14 +167,15 @@ void show_extras_menu()
                     {
                         struct timeval tp;
                         gettimeofday(&tp, NULL);
-                        sprintf(custom_path, "/emmc/clockworkmod/zips/%d", tp.tv_sec);
+                        sprintf(custom_path, "/sdcard/clockworkmod/zips/%d", tp.tv_sec);
                     }
                     else
                     {
-                        strftime(custom_path, sizeof(custom_path), "/emmc/clockworkmod/zips/%F.%H.%M.%S", tmp);
+                        strftime(custom_path, sizeof(custom_path), "/sdcard/clockworkmod/zips/%F.%H.%M.%S", tmp);
                     }
                     create_customzip(custom_path);
-		ui_print("custom zip created in /emmc/clockworkmod/zips/\n");
+        ui_print("Dump to zip file completed!\n");
+        ui_print("Zip created in /sdcard/clockworkmod/zips/\n");
 	}
 		ensure_path_unmounted("/system");
 		break;
