@@ -409,6 +409,23 @@ int nandroid_backup(const char* backup_path)
             return ret;
     }
 
+    ensure_path_mounted("/sdcard");
+    if (0 != stat("/sdcard/clockworkmod/.backup_imei", &s))
+    {
+        ui_print("Backup of IMEI disabled. Skipping...\n");
+    }
+    else
+    {
+        if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/dev/block/mmcblk0p5", 0)))
+            return ret;
+
+        if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/dev/block/mmcblk0p10", 0)))
+            return ret;
+
+        if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/dev/block/mmcblk0p11", 0)))
+            return ret;
+    }
+
 
 
 
@@ -745,6 +762,25 @@ int nandroid_restore(const char* backup_path, int restore_boot, int restore_cust
 
     if (restore_data && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/emmc", 0)))
         return ret;
+
+    ensure_path_mounted("/sdcard");
+    if (0 != stat("/sdcard/clockworkmod/.restore_imei", &s))
+    {
+        ui_print("Restore of IMEI disabled. Skipping...\n");
+    }
+    else
+    {
+
+    if (restore_data && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/dev/block/mmcblk0p5", 0)))
+        return ret;
+
+    if (restore_data && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/dev/block/mmcblk0p10", 0)))
+        return ret;
+
+    if (restore_data && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/dev/block/mmcblk0p11", 0)))
+        return ret;
+    }
+
 
     if (restore_cache && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/cache", 0)))
         return ret;
