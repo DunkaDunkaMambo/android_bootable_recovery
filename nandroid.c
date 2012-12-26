@@ -398,6 +398,9 @@ int nandroid_backup(const char* backup_path)
             return ret;
     }
 
+    if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/cache", 0)))
+        return ret;
+
     ensure_path_mounted("/sdcard");
     if (0 != stat("/sdcard/clockworkmod/.backup_internal", &s))
     {
@@ -408,29 +411,6 @@ int nandroid_backup(const char* backup_path)
         if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/emmc", 0)))
             return ret;
     }
-
-    ensure_path_mounted("/sdcard");
-    if (0 != stat("/sdcard/clockworkmod/.backup_imei", &s))
-    {
-        ui_print("Backup of IMEI disabled. Skipping...\n");
-    }
-    else
-    {
-        if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/dev/block/mmcblk0p5", 0)))
-            return ret;
-
-        if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/dev/block/mmcblk0p10", 0)))
-            return ret;
-
-        if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/dev/block/mmcblk0p11", 0)))
-            return ret;
-    }
-
-
-
-
-    if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/cache", 0)))
-        return ret;
 
     vol = volume_for_path("/sd-ext");
     if (vol == NULL || 0 != stat(vol->device, &s))
@@ -693,7 +673,7 @@ int nandroid_restore_partition(const char* backup_path, const char* root) {
     return nandroid_restore_partition_extended(backup_path, root, 1);
 }
 
-int nandroid_restore(const char* backup_path, int restore_boot, int restore_cust, int restore_system, int restore_data, int restore_cache, int restore_sdext, int restore_wimax)
+int nandroid_restore(const char* backup_path, int restore_boot, int restore_cust, int restore_system, int restore_data, int restore_cache, int restore_emmc, int restore_sdext, int restore_wimax)
 {
     ui_set_background(BACKGROUND_ICON_INSTALLING);
     ui_show_indeterminate_progress();
@@ -760,9 +740,6 @@ int nandroid_restore(const char* backup_path, int restore_boot, int restore_cust
     if (restore_data && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/sdcard/.android_secure", 0)))
         return ret;
 
-    if (restore_data && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/emmc", 0)))
-        return ret;
-
     ensure_path_mounted("/sdcard");
     if (0 != stat("/sdcard/clockworkmod/.restore_imei", &s))
     {
@@ -781,8 +758,10 @@ int nandroid_restore(const char* backup_path, int restore_boot, int restore_cust
         return ret;
     }
 
-
     if (restore_cache && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/cache", 0)))
+        return ret;
+
+    if (restore_emmc && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/emmc", 0)))
         return ret;
 
     if (restore_sdext && 0 != (ret = nandroid_restore_partition(backup_path, "/sd-ext")))
@@ -821,7 +800,7 @@ int nandroid_main(int argc, char** argv)
     {
         if (argc != 3)
             return nandroid_usage();
-        return nandroid_restore(argv[2], 1, 1, 1, 1, 1, 1, 0);
+        return nandroid_restore(argv[2], 1, 1, 1, 1, 1, 1, 1, 0);
     }
     
     return nandroid_usage();
