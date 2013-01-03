@@ -265,6 +265,7 @@ int nandroid_backup_partition_extended(const char* backup_path, const char* moun
     int callback = stat("/sdcard/clockworkmod/.hidenandroidprogress", &file_info) != 0;
 
     ui_print("Backing up %s...\n", name);
+    ui_print("");
     if (0 != (ret = ensure_path_mounted(mount_point) != 0)) {
         ui_print("Can't mount %s!\n", mount_point);
         return ret;
@@ -311,6 +312,7 @@ int nandroid_backup_partition(const char* backup_path, const char* root) {
             strcmp(vol->fs_type, "emmc") == 0) {
         const char* name = basename(root);
         sprintf(tmp, "%s/%s.img", backup_path, name);
+        ui_print("");
         ui_print("Backing up %s image...\n", name);
         if (0 != (ret = backup_raw_partition(vol->fs_type, vol->device, tmp))) {
             ui_print("Error while backing up %s image!", name);
@@ -411,6 +413,24 @@ int nandroid_backup(const char* backup_path)
         if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/emmc", 0)))
             return ret;
     }
+
+    ensure_path_mounted("/sdcard");
+    if (0 != stat("/sdcard/clockworkmod/.backup_imei", &s))
+    {
+        ui_print("Backup of oem info disabled. Skipping...\n");
+    }
+    else
+    {
+        if (0 != (ret = nandroid_backup_partition(backup_path, "/p5")))
+            return ret;
+
+        if (0 != (ret = nandroid_backup_partition(backup_path, "/p10")))
+            return ret;
+
+        if (0 != (ret = nandroid_backup_partition(backup_path, "/p11")))
+            return ret;
+    }
+
 
     vol = volume_for_path("/sd-ext");
     if (vol == NULL || 0 != stat(vol->device, &s))
@@ -740,32 +760,39 @@ int nandroid_restore(const char* backup_path, int restore_boot, int restore_cust
     if (restore_data && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/sdcard/.android_secure", 0)))
         return ret;
 
-    ensure_path_mounted("/sdcard");
-    if (0 != stat("/sdcard/clockworkmod/.restore_imei", &s))
-    {
-        ui_print("Restore of IMEI disabled. Skipping...\n");
-    }
-    else
-    {
-
-    if (restore_data && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/dev/block/mmcblk0p5", 0)))
-        return ret;
-
-    if (restore_data && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/dev/block/mmcblk0p10", 0)))
-        return ret;
-
-    if (restore_data && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/dev/block/mmcblk0p11", 0)))
-        return ret;
-    }
-
     if (restore_cache && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/cache", 0)))
-        return ret;
-
-    if (restore_emmc && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/emmc", 0)))
         return ret;
 
     if (restore_sdext && 0 != (ret = nandroid_restore_partition(backup_path, "/sd-ext")))
         return ret;
+
+    ensure_path_mounted("/sdcard");
+    if (0 != stat("/sdcard/clockworkmod/.restore_internal", &s))
+    {
+        ui_print("Restore of internal storage disabled. Skipping...\n");
+    }
+    else
+    {
+    if (restore_emmc && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/emmc", 0)))
+        return ret;
+    }
+
+    ensure_path_mounted("/sdcard");
+    if (0 != stat("/sdcard/clockworkmod/.restore_imei", &s))
+    {
+        ui_print("Restore of oem info disabled. Skipping...\n");
+    }
+    else
+    {
+        if (restore_data && 0 != (ret = nandroid_restore_partition(backup_path, "/p5")))
+            return ret;
+
+        if (restore_data && 0 != (ret = nandroid_restore_partition(backup_path, "/p10")))
+            return ret;
+
+        if (restore_data && 0 != (ret = nandroid_restore_partition(backup_path, "/p11")))
+            return ret;
+    }
 
     sync();
     ui_set_background(BACKGROUND_ICON_NONE);
