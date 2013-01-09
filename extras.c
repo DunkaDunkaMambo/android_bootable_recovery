@@ -110,8 +110,7 @@ void show_extras_menu()
                             "Toggle smaller confirmation sub-menus",
                             "Toggle backup & restore progress",
                             "Toggle backup of internal storage",
-                            "Toggle backup of imei",
-                            "Toggle restore of imei",
+                            "Toggle restore of oem info",
                             "Create zip file with the current ROM",
                             NULL
     };
@@ -158,16 +157,6 @@ void show_extras_menu()
                 break;
 	    case 4:
                 ensure_path_mounted("/sdcard");
-                if( access("/sdcard/clockworkmod/.backup_imei", F_OK ) != -1 ) {
-                   __system("rm -rf /sdcard/clockworkmod/.backup_imei");
-                   ui_print("Backup of imei disabled\n");
-                } else {
-                   __system("touch /sdcard/clockworkmod/.backup_imei");
-                   ui_print("Backup of imei enabled\n");
-                }
-                break;
-	    case 5:
-                ensure_path_mounted("/sdcard");
                 if( access("/sdcard/clockworkmod/.restore_imei", F_OK ) != -1 ) {
                    __system("rm -rf /sdcard/clockworkmod/.restore_imei");
                    ui_print("Restore of imei disabled\n");
@@ -176,7 +165,7 @@ void show_extras_menu()
                    ui_print("Restore of imei enabled\n");
                 }
                 break;
-	    case 6:
+	    case 5:
 		ensure_path_mounted("/system");
 		ensure_path_mounted("/sdcard");
                 if (confirm_selection("Create a zip from system and boot?", "Yes - Create zip file")) {

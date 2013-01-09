@@ -200,6 +200,7 @@ Value* RestoreFn(const char* name, State* state, int argc, Expr* argv[]) {
     int restorecache = 1;
     int restoreemmc = 1;
     int restoresdext = 1;
+    int restoreimei = 1;
     int i;
     for (i = 1; i < argc; i++)
     {
@@ -219,6 +220,8 @@ Value* RestoreFn(const char* name, State* state, int argc, Expr* argv[]) {
             restoreemmc = 0;
         else if (strcmp(args2[i], "nosd-ext") == 0)
             restoresdext = 0;
+        else if (strcmp(args2[i], "noimei") == 0)
+            restoreimei = 0;
     }
     
     for (i = 0; i < argc; ++i) {
@@ -227,7 +230,7 @@ Value* RestoreFn(const char* name, State* state, int argc, Expr* argv[]) {
     free(args);
     free(args2);
 
-    if (0 != nandroid_restore(path, restoreboot, restorecust, restoresystem, restoredata, restorecache, restoreemmc, restoresdext, 0)) {
+    if (0 != nandroid_restore(path, restoreboot, restorecust, restoresystem, restoredata, restorecache, restoreemmc, restoresdext, restoreimei, 0)) {
         free(path);
         return StringValue(strdup(""));
     }
