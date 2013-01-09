@@ -1,8 +1,8 @@
 #!/sbin/sh
 
-if [ ! -e /sdcard/clockworkmod/ba_backup/bootanimation.zip ]
+if [ ! -e /emmc/clockworkmod/bootanimation_backup.zip ]
 then
-    mv /system/media/bootanimation.zip /sdcard/clockworkmod/ba_backup/bootanimation.zip
+    mv /system/media/bootanimation.zip /emmc/clockworkmod/bootanimation_backup.zip
 else
     rm -rf /system/media/bootanimation.zip
 fi

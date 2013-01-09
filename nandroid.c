@@ -262,9 +262,9 @@ int nandroid_backup_partition_extended(const char* backup_path, const char* moun
     char name[PATH_MAX];
     strcpy(name, basename(mount_point));
 
-    ensure_path_mounted("/sdcard");
+    ensure_path_mounted("/emmc");
     struct stat file_info;
-    int callback = stat("/sdcard/clockworkmod/.hidenandroidprogress", &file_info) != 0;
+    int callback = stat("/emmc/clockworkmod/.hidenandroidprogress", &file_info) != 0;
 
     ui_print("Backing up %s...\n", name);
     ui_print("");
@@ -405,8 +405,8 @@ int nandroid_backup(const char* backup_path)
     if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/cache", 0)))
         return ret;
 
-    ensure_path_mounted("/sdcard");
-    if (0 != stat("/sdcard/clockworkmod/.backup_internal", &s))
+    ensure_path_mounted("/emmc");
+    if (0 != stat("/emmc/clockworkmod/.backup_internal", &s))
     {
         ui_print("Backup of internal storage disabled. Skipping...\n");
     }
@@ -620,8 +620,8 @@ int nandroid_restore_partition_extended(const char* backup_path, const char* mou
 
     ensure_directory(mount_point);
 
-    ensure_path_mounted("/sdcard");
-    int callback = stat("/sdcard/clockworkmod/.hidenandroidprogress", &file_info) != 0;
+    ensure_path_mounted("/emmc");
+    int callback = stat("/emmc/clockworkmod/.hidenandroidprogress", &file_info) != 0;
 
     ui_print("Restoring %s...\n", name);
     if (backup_filesystem == NULL) {
@@ -763,8 +763,8 @@ int nandroid_restore(const char* backup_path, int restore_boot, int restore_cust
     if (restore_emmc && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/emmc", 0)))
         return ret;
 
-    ensure_path_mounted("/sdcard");
-    if (0 != stat("/sdcard/clockworkmod/.restore_imei", &s))
+    ensure_path_mounted("/emmc");
+    if (0 != stat("/emmc/clockworkmod/.restore_imei", &s))
     {
         ui_print("Restore of oem info disabled. Skipping...\n");
     }
