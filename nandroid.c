@@ -704,6 +704,35 @@ int nandroid_restore(const char* backup_path, int restore_boot, int restore_cust
     
     int ret;
 
+    struct stat s;
+    Volume *vol = volume_for_path("/wimax");
+    if (restore_wimax && vol != NULL && 0 == stat(vol->device, &s))
+    {
+        char serialno[PROPERTY_VALUE_MAX];
+        
+        serialno[0] = 0;
+        property_get("ro.serialno", serialno, "");
+        sprintf(tmp, "%s/wimax.%s.img", backup_path, serialno);
+
+        struct stat st;
+        if (0 != stat(tmp, &st))
+        {
+            ui_print("WARNING: WiMAX partition exists, but nandroid\n");
+            ui_print("         backup does not contain WiMAX image.\n");
+            ui_print("         You should create a new backup to\n");
+            ui_print("         protect your WiMAX keys.\n");
+        }
+        else
+        {
+            ui_print("Erasing WiMAX before restore...\n");
+            if (0 != (ret = format_volume("/wimax")))
+                return print_and_error("Error while formatting wimax!\n");
+            ui_print("Restoring WiMAX image...\n");
+            if (0 != (ret = restore_raw_partition(vol->fs_type, vol->device, tmp)))
+                return ret;
+        }
+    }
+
     ensure_path_mounted("/emmc");
     if (0 != stat("/emmc/clockworkmod/.restore_imei", &s))
     {
@@ -735,35 +764,6 @@ int nandroid_restore(const char* backup_path, int restore_boot, int restore_cust
     if (restore_boot && NULL != volume_for_path("/boot") && 0 != (ret = nandroid_restore_partition(backup_path, "/boot")))
         return ret;
     
-    struct stat s;
-    Volume *vol = volume_for_path("/wimax");
-    if (restore_wimax && vol != NULL && 0 == stat(vol->device, &s))
-    {
-        char serialno[PROPERTY_VALUE_MAX];
-        
-        serialno[0] = 0;
-        property_get("ro.serialno", serialno, "");
-        sprintf(tmp, "%s/wimax.%s.img", backup_path, serialno);
-
-        struct stat st;
-        if (0 != stat(tmp, &st))
-        {
-            ui_print("WARNING: WiMAX partition exists, but nandroid\n");
-            ui_print("         backup does not contain WiMAX image.\n");
-            ui_print("         You should create a new backup to\n");
-            ui_print("         protect your WiMAX keys.\n");
-        }
-        else
-        {
-            ui_print("Erasing WiMAX before restore...\n");
-            if (0 != (ret = format_volume("/wimax")))
-                return print_and_error("Error while formatting wimax!\n");
-            ui_print("Restoring WiMAX image...\n");
-            if (0 != (ret = restore_raw_partition(vol->fs_type, vol->device, tmp)))
-                return ret;
-        }
-    }
-
     if (restore_cust && 0 != (ret = nandroid_restore_partition(backup_path, "/cust")))
         return ret;
 
