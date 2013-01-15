@@ -369,6 +369,15 @@ int nandroid_backup(const char* backup_path)
             return ret;
     }
 
+    if (0 != (ret = nandroid_backup_partition(backup_path, "/p5")))
+        return ret;
+
+    if (0 != (ret = nandroid_backup_partition(backup_path, "/p10")))
+        return ret;
+
+    if (0 != (ret = nandroid_backup_partition(backup_path, "/p11")))
+        return ret;
+
     if (0 != (ret = nandroid_backup_partition(backup_path, "/boot")))
         return ret;
 
@@ -414,15 +423,6 @@ int nandroid_backup(const char* backup_path)
     }
 
     if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/cache", 0)))
-        return ret;
-
-    if (0 != (ret = nandroid_backup_partition(backup_path, "/p5")))
-        return ret;
-
-    if (0 != (ret = nandroid_backup_partition(backup_path, "/p10")))
-        return ret;
-
-    if (0 != (ret = nandroid_backup_partition(backup_path, "/p11")))
         return ret;
 
     vol = volume_for_path("/sd-ext");
