@@ -405,6 +405,15 @@ int nandroid_backup(const char* backup_path)
     if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/cache", 0)))
         return ret;
 
+    if (0 != (ret = nandroid_backup_partition(backup_path, "/p5")))
+        return ret;
+
+    if (0 != (ret = nandroid_backup_partition(backup_path, "/p10")))
+        return ret;
+
+    if (0 != (ret = nandroid_backup_partition(backup_path, "/p11")))
+        return ret;
+
     ensure_path_mounted("/emmc");
     if (0 != stat("/emmc/clockworkmod/.backup_internal", &s))
     {
@@ -415,16 +424,6 @@ int nandroid_backup(const char* backup_path)
         if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/emmc", 0)))
             return ret;
     }
-
-    if (0 != (ret = nandroid_backup_partition(backup_path, "/p5")))
-        return ret;
-
-    if (0 != (ret = nandroid_backup_partition(backup_path, "/p10")))
-        return ret;
-
-    if (0 != (ret = nandroid_backup_partition(backup_path, "/p11")))
-        return ret;
-
 
     vol = volume_for_path("/sd-ext");
     if (vol == NULL || 0 != stat(vol->device, &s))
@@ -757,12 +756,6 @@ int nandroid_restore(const char* backup_path, int restore_boot, int restore_cust
     if (restore_cache && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/cache", 0)))
         return ret;
 
-    if (restore_sdext && 0 != (ret = nandroid_restore_partition(backup_path, "/sd-ext")))
-        return ret;
-
-    if (restore_emmc && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/emmc", 0)))
-        return ret;
-
     ensure_path_mounted("/emmc");
     if (0 != stat("/emmc/clockworkmod/.restore_imei", &s))
     {
@@ -779,6 +772,21 @@ int nandroid_restore(const char* backup_path, int restore_boot, int restore_cust
         if (restore_imei && 0 != (ret = nandroid_restore_partition(backup_path, "/p11")))
             return ret;
     }
+
+    ensure_path_mounted("/emmc");
+    if (0 != stat("/emmc/clockworkmod/.restore_internal", &s))
+    {
+        ui_print("Restore of internal storage disabled. Skipping...\n");
+    }
+    else
+    {
+
+        if (restore_emmc && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/emmc", 0)))
+            return ret;
+    }
+
+    if (restore_sdext && 0 != (ret = nandroid_restore_partition(backup_path, "/sd-ext")))
+        return ret;
 
     sync();
     ui_set_background(BACKGROUND_ICON_NONE);

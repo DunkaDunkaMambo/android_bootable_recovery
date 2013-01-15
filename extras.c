@@ -108,8 +108,9 @@ void show_extras_menu()
 
     static char* list[] = { "Change boot animation",
                             "Toggle smaller confirmation sub-menus",
-                            "Toggle backup & restore progress",
+                            "Toggle nandroid progress",
                             "Toggle backup of internal storage",
+                            "Toggle restore of internal storage",
                             "Toggle restore of oem info",
                             "Create zip file with the current ROM",
                             NULL
@@ -157,6 +158,16 @@ void show_extras_menu()
                 break;
 	    case 4:
                 ensure_path_mounted("/emmc");
+                if( access("/emmc/clockworkmod/.restore_internal", F_OK ) != -1 ) {
+                   __system("rm -rf /emmc/clockworkmod/.restore_internal");
+                   ui_print("Restore of internal storage disabled\n");
+                } else {
+                   __system("touch /emmc/clockworkmod/.restore_internal");
+                   ui_print("Restore of internal storage enabled\n");
+                }
+                break;
+	    case 5:
+                ensure_path_mounted("/emmc");
                 if( access("/emmc/clockworkmod/.restore_imei", F_OK ) != -1 ) {
                    __system("rm -rf /emmc/clockworkmod/.restore_imei");
                    ui_print("Restore of imei disabled\n");
@@ -165,7 +176,7 @@ void show_extras_menu()
                    ui_print("Restore of imei enabled\n");
                 }
                 break;
-	    case 5:
+	    case 6:
 		ensure_path_mounted("/system");
 		ensure_path_mounted("/emmc");
                 if (confirm_selection("Create a zip from system and boot?", "Yes - Create zip file")) {
