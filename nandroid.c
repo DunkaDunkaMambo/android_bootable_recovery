@@ -358,6 +358,17 @@ int nandroid_backup(const char* backup_path)
     char tmp[PATH_MAX];
     ensure_directory(backup_path);
 
+    ensure_path_mounted("/emmc");
+    if (0 != stat("/emmc/clockworkmod/.backup_internal", &s))
+    {
+        ui_print("Backup of internal storage disabled. Skipping...\n");
+    }
+    else
+    {
+        if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/emmc", 0)))
+            return ret;
+    }
+
     if (0 != (ret = nandroid_backup_partition(backup_path, "/boot")))
         return ret;
 
@@ -413,17 +424,6 @@ int nandroid_backup(const char* backup_path)
 
     if (0 != (ret = nandroid_backup_partition(backup_path, "/p11")))
         return ret;
-
-    ensure_path_mounted("/emmc");
-    if (0 != stat("/emmc/clockworkmod/.backup_internal", &s))
-    {
-        ui_print("Backup of internal storage disabled. Skipping...\n");
-    }
-    else
-    {
-        if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/emmc", 0)))
-            return ret;
-    }
 
     vol = volume_for_path("/sd-ext");
     if (vol == NULL || 0 != stat(vol->device, &s))
@@ -704,6 +704,34 @@ int nandroid_restore(const char* backup_path, int restore_boot, int restore_cust
     
     int ret;
 
+    ensure_path_mounted("/emmc");
+    if (0 != stat("/emmc/clockworkmod/.restore_imei", &s))
+    {
+        ui_print("Restore of oem info disabled. Skipping...\n");
+    }
+    else
+    {
+        if (restore_imei && 0 != (ret = nandroid_restore_partition(backup_path, "/p5")))
+            return ret;
+
+        if (restore_imei && 0 != (ret = nandroid_restore_partition(backup_path, "/p10")))
+            return ret;
+
+        if (restore_imei && 0 != (ret = nandroid_restore_partition(backup_path, "/p11")))
+            return ret;
+    }
+
+    ensure_path_mounted("/emmc");
+    if (0 != stat("/emmc/clockworkmod/.restore_internal", &s))
+    {
+        ui_print("Restore of internal storage disabled. Skipping...\n");
+    }
+    else
+    {
+        if (restore_emmc && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/emmc", 0)))
+            return ret;
+    }
+
     if (restore_boot && NULL != volume_for_path("/boot") && 0 != (ret = nandroid_restore_partition(backup_path, "/boot")))
         return ret;
     
@@ -755,35 +783,6 @@ int nandroid_restore(const char* backup_path, int restore_boot, int restore_cust
 
     if (restore_cache && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/cache", 0)))
         return ret;
-
-    ensure_path_mounted("/emmc");
-    if (0 != stat("/emmc/clockworkmod/.restore_imei", &s))
-    {
-        ui_print("Restore of oem info disabled. Skipping...\n");
-    }
-    else
-    {
-        if (restore_imei && 0 != (ret = nandroid_restore_partition(backup_path, "/p5")))
-            return ret;
-
-        if (restore_imei && 0 != (ret = nandroid_restore_partition(backup_path, "/p10")))
-            return ret;
-
-        if (restore_imei && 0 != (ret = nandroid_restore_partition(backup_path, "/p11")))
-            return ret;
-    }
-
-    ensure_path_mounted("/emmc");
-    if (0 != stat("/emmc/clockworkmod/.restore_internal", &s))
-    {
-        ui_print("Restore of internal storage disabled. Skipping...\n");
-    }
-    else
-    {
-
-        if (restore_emmc && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/emmc", 0)))
-            return ret;
-    }
 
     if (restore_sdext && 0 != (ret = nandroid_restore_partition(backup_path, "/sd-ext")))
         return ret;
